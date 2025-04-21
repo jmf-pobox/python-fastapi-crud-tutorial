@@ -1,12 +1,18 @@
 import json
+from typing import Any, Dict, List, Optional
+
 import pytest
+from fastapi.testclient import TestClient
+from starlette.testclient import TestClient
 
 from app.api import crud
+from app.api.models import NoteSchema
 
-def test_read_note(test_app, monkeypatch):
-    test_data = {"id" : 1, "title": "something", "description" : "something else"}
 
-    async def mock_get(id):
+def test_read_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    test_data = {"id": 1, "title": "something", "description": "something else"}
+
+    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
         return test_data
 
     monkeypatch.setattr(crud, "get", mock_get)
@@ -15,8 +21,9 @@ def test_read_note(test_app, monkeypatch):
     assert response.status_code == 200
     assert response.json() == test_data
 
-def test_read_note_incorrect_id(test_app, monkeypatch):
-    async def mock_get(id):
+
+def test_read_note_incorrect_id(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
         return None
 
     monkeypatch.setattr(crud, "get", mock_get)
@@ -29,13 +36,13 @@ def test_read_note_incorrect_id(test_app, monkeypatch):
     assert response.status_code == 422
 
 
-def test_read_all_notes(test_app, monkeypatch):
+def test_read_all_notes(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     test_data = [
         {"title": "something", "description": "something else", "id": 1},
         {"title": "someone", "description": "someone else", "id": 2},
     ]
 
-    async def mock_get_all():
+    async def mock_get_all() -> List[Dict[str, Any]]:
         return test_data
 
     monkeypatch.setattr(crud, "get_all", mock_get_all)
@@ -45,7 +52,7 @@ def test_read_all_notes(test_app, monkeypatch):
     assert response.json() == test_data
 
 
-def test_create_note(test_app, monkeypatch):
+def test_create_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     test_request_payload = {"title": "something", "description": "something else"}
     test_response_payload = {
         "id": 1,
@@ -53,7 +60,7 @@ def test_create_note(test_app, monkeypatch):
         "description": "something else",
     }
 
-    async def mock_post(payload):
+    async def mock_post(payload: NoteSchema) -> int:
         return 1
 
     monkeypatch.setattr(crud, "post", mock_post)
@@ -67,23 +74,25 @@ def test_create_note(test_app, monkeypatch):
     assert response.json() == test_response_payload
 
 
-def test_create_note_invalid_json(test_app):
+def test_create_note_invalid_json(test_app: TestClient) -> None:
     response = test_app.post("/notes/", content=json.dumps({"title": "something"}))
     assert response.status_code == 422
 
-    response = test_app.post("/notes/", content=json.dumps({"title": "1", "description": "2"}))
+    response = test_app.post(
+        "/notes/", content=json.dumps({"title": "1", "description": "2"})
+    )
     assert response.status_code == 422
 
 
-def test_update_note(test_app, monkeypatch):
+def test_update_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     test_update_data = {"title": "someone", "description": "someone else", "id": 1}
 
-    async def mock_get(id):
-        return True
+    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
+        return test_update_data
 
     monkeypatch.setattr(crud, "get", mock_get)
 
-    async def mock_put(id, payload):
+    async def mock_put(id: int, payload: NoteSchema) -> int:
         return 1
 
     monkeypatch.setattr(crud, "put", mock_put)
@@ -91,6 +100,7 @@ def test_update_note(test_app, monkeypatch):
     response = test_app.put("/notes/1/", content=json.dumps(test_update_data))
     assert response.status_code == 200
     assert response.json() == test_update_data
+
 
 @pytest.mark.parametrize(
     "id, payload, status_code",
@@ -103,27 +113,34 @@ def test_update_note(test_app, monkeypatch):
         [0, {"title": "foo", "description": "bar"}, 422],
     ],
 )
-
-
-def test_update_note_invalid(test_app, monkeypatch, id, payload, status_code):
-    async def mock_get(id):
+def test_update_note_invalid(
+    test_app: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+    id: int,
+    payload: Dict[str, Any],
+    status_code: int,
+) -> None:
+    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
         return None
 
     monkeypatch.setattr(crud, "get", mock_get)
 
-    response = test_app.put(f"/notes/{id}/", content=json.dumps(payload),)
+    response = test_app.put(
+        f"/notes/{id}/",
+        content=json.dumps(payload),
+    )
     assert response.status_code == status_code
 
 
-def test_delete_note(test_app, monkeypatch):
+def test_delete_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     test_data = {"title": "someone", "description": "someone else", "id": 1}
 
-    async def mock_get(id):
+    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
         return test_data
 
     monkeypatch.setattr(crud, "get", mock_get)
 
-    async def mock_delete(id):
+    async def mock_delete(id: int) -> int:
         return id
 
     monkeypatch.setattr(crud, "delete", mock_delete)
@@ -133,8 +150,9 @@ def test_delete_note(test_app, monkeypatch):
     assert response.status_code == 200
     assert response.json() == test_data
 
-def test_remove_note_incorrect_id(test_app, monkeypatch):
-    async def mock_get(id):
+
+def test_remove_note_incorrect_id(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
         return None
 
     monkeypatch.setattr(crud, "get", mock_get)
@@ -145,4 +163,3 @@ def test_remove_note_incorrect_id(test_app, monkeypatch):
 
     response = test_app.delete("/notes/0/")
     assert response.status_code == 422
-

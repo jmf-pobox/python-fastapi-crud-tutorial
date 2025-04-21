@@ -1,19 +1,12 @@
 import os
 
-from sqlalchemy import (
-    Column,
-    DateTime,
-    Integer,
-    MetaData,
-    String,
-    Table,
-    create_engine
-)
+from databases import Database
+from sqlalchemy import Column, DateTime, Integer, MetaData, String, Table, create_engine
 from sqlalchemy.sql import func
 
-from databases import Database
-
 DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL is not set")
 
 # SQLAlchemy
 engine = create_engine(DATABASE_URL)
@@ -29,4 +22,3 @@ notes = Table(
 
 # databases query builder
 database = Database(DATABASE_URL)
-

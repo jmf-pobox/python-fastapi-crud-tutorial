@@ -23,16 +23,29 @@ This project follows a clean architecture with separation of concerns:
 
 ### Prerequisites
 
+- Python 3.11 or higher
 - Docker and Docker Compose
+- Hatch (Python package manager)
 
 ### Setup and Running
 
 1. Clone this repository
 2. Navigate to the project directory
-3. Start the application:
-
+3. Install Hatch:
 ```bash
-docker-compose up -d --build
+pip install hatch
+```
+
+4. Create and activate the development environment:
+```bash
+hatch env create
+hatch shell
+```
+
+5. Start the application:
+```bash
+hatch run docker-up
+hatch run dev
 ```
 
 This will:
@@ -40,6 +53,33 @@ This will:
 - Start a PostgreSQL database container
 - Connect the application to the database
 - Expose the API on port 8002
+
+### Development Tools
+
+The project uses Hatch for managing development tasks:
+
+```bash
+# Run tests
+hatch run test
+
+# Run linter (Ruff)
+hatch run lint
+
+# Format code (Ruff)
+hatch run format
+
+# Type checking (MyPy)
+hatch run type
+
+# Docker commands
+hatch run docker-up     # Start containers
+hatch run docker-down   # Stop containers
+hatch run docker-logs   # View logs
+hatch run docker-build  # Build images
+
+# Development server
+hatch run dev          # Start server with Docker
+```
 
 ### API Endpoints
 
@@ -69,6 +109,7 @@ http GET http://localhost:8002/notes/1
 ```
 fastapi-crud/
 ├── docker-compose.yml
+├── pyproject.toml        # Project configuration and dependencies
 └── src/
     ├── Dockerfile
     ├── app/
@@ -81,17 +122,6 @@ fastapi-crud/
     │   ├── db.py          # Database configuration
     │   └── main.py        # Application setup
     ├── tests/             # Test files
-    └── requirements.txt   # Dependencies
-```
-
-### Running Tests
-
-```bash
-# Run all tests
-docker-compose exec web pytest .
-
-# Run specific test file
-docker-compose exec web pytest tests/test_notes.py
 ```
 
 ### Dependencies
@@ -102,6 +132,8 @@ docker-compose exec web pytest tests/test_notes.py
 - **Databases**: Async database support for Python
 - **Asyncpg**: PostgreSQL client library for asyncio
 - **Pytest**: Testing framework
+- **Ruff**: Fast Python linter and formatter
+- **MyPy**: Static type checker
 
 ## Environment Variables
 
@@ -135,4 +167,4 @@ PostgreSQL database with the following settings (configured in docker-compose.ym
 * Abstract out the application configuration to a separate file.
 * In a production environment, you'll probably want to stand up Gunicorn and let it manage Uvicorn. Review Running with Gunicorn and the Deployment guide for more info. Check out the official uvicorn-gunicorn-fastapi Docker image as well.
 * Finally, check out the Test-Driven Development with FastAPI and Docker course as well as our other FastAPI courses for more!
-Y* ou can find the source code in the fastapi-crud-async repo. Thanks for reading!
+* You can find the source code in the fastapi-crud-async repo. Thanks for reading!

@@ -157,3 +157,5 @@ cython_debug/
 # IDE specific
 .vscode/
 .idea/
+.ruff_cache/
+.pixi

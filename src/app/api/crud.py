@@ -1,32 +1,40 @@
+from typing import Any, List, Optional, Sequence, cast
+
 from app.api.models import NoteSchema
-from app.db import notes, database
+from app.db import database, notes
+from databases.interfaces import Record
 
 
-async def post(payload: NoteSchema):
-    query = notes.insert().values(title=payload.title, description=payload.description)
-    return await database.execute(query=query)
+async def post(payload: NoteSchema) -> int:
+    query_stmt = notes.insert().values(
+        title=payload.title, description=payload.description
+    )
+    result = await database.execute(query=query_stmt)
+    return cast(int, result)
 
 
-async def get(id: int):
-    query = notes.select().where(id == notes.c.id)
-    return await database.fetch_one(query=query)
+async def get(id: int) -> Optional[Record]:
+    query_stmt = notes.select().where(id == notes.c.id)  # type: ignore
+    return await database.fetch_one(query=query_stmt)
 
 
-async def get_all():
-    query = notes.select()
-    return await database.fetch_all(query=query)
+async def get_all() -> Sequence[Record]:
+    query_stmt = notes.select()
+    return await database.fetch_all(query=query_stmt)
 
 
-async def put(id: int, payload: NoteSchema):
-    query = (
+async def put(id: int, payload: NoteSchema) -> int:
+    query_stmt = (
         notes.update()
-        .where(id == notes.c.id)
+        .where(id == notes.c.id)  # type: ignore
         .values(title=payload.title, description=payload.description)
         .returning(notes.c.id)
     )
-    return await database.execute(query=query)
+    result = await database.execute(query=query_stmt)
+    return cast(int, result)
 
 
-async def delete(id: int):
-    query = notes.delete().where(id == notes.c.id)
-    return await database.execute(query == query)
+async def delete(id: int) -> int:
+    query_stmt = notes.delete().where(id == notes.c.id)  # type: ignore
+    result = await database.execute(query=query_stmt)
+    return cast(int, result)
