@@ -1,10 +1,17 @@
-from pydantic import BaseModel, Field
+from datetime import datetime
+
+from pydantic import BaseModel
 
 
-class NoteSchema(BaseModel):
-    title: str = Field(..., min_length=3, max_length=50)
-    description: str = Field(..., min_length=3, max_length=50)
+class Note(BaseModel):
+    """Domain model for a note."""
 
-
-class NoteDB(NoteSchema):
     id: int
+    title: str
+    description: str
+    created_date: datetime
+
+    class Config:
+        """Pydantic config for the model."""
+
+        from_attributes = True

@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import Generator
+from collections.abc import Generator
 
 # Set up test database URL before any imports
 os.environ["DATABASE_URL"] = "sqlite:///./test.db"
@@ -8,7 +8,11 @@ os.environ["DATABASE_URL"] = "sqlite:///./test.db"
 import pytest
 from starlette.testclient import TestClient
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add src directory to Python path
+src_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"
+)
+sys.path.append(src_path)
 
 from fastapi_crud_tutorial.main import app
 

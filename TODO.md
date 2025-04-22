@@ -18,10 +18,12 @@
 
 3. Code Organization
    - [ ] Review and implement Single Responsibility Principle across modules
-   - [ ] Add type hints to all functions (need to check current coverage)
+   - [✓] Add type hints to all functions (need to check current coverage)
    - [ ] Consider implementing proper dependency injection patterns
-   - [ ] Move database models to `models/` directory
-   - [ ] Create Pydantic schemas in `schemas/` directory
+   - [✓] Move database models to `models/` directory
+   - [✓] Create Pydantic schemas in `schemas/` directory
+   - [✓] Rename NoteSchema to NoteCreate for better clarity
+   - [✓] Update test files to use correct schema names
 
 4. Project Configuration
    - [✓] pyproject.toml exists and is well configured
@@ -31,9 +33,10 @@
    - [ ] Consider adding more Hatch environments (e.g., dev, prod)
 
 5. Testing
-   - [ ] Ensure test coverage for all public methods
+   - [✓] Ensure test coverage for all public methods
    - [ ] Add property-based testing where appropriate
-   - [ ] Implement proper mocking for external dependencies
+   - [✓] Implement proper mocking for external dependencies
+   - [✓] Fix type hints in test files to match schema changes
 
 6. Documentation
    - [ ] Add docstrings to all public functions and classes
@@ -43,10 +46,11 @@
 7. Database
    - [ ] Consider adding Alembic for database migrations
    - [ ] Move database configuration to separate config file
-   - [ ] Implement proper repository pattern for data access
+   - [✓] Implement proper repository pattern for data access
+   - [✓] Update CRUD operations to use correct schema types
 
 8. Code Quality
-   - [ ] Run full ruff check and address any issues
-   - [ ] Run mypy --strict and fix any type issues
+   - [✓] Run full ruff check and address any issues
+   - [✓] Run mypy --strict and fix any type issues
    - [ ] Implement proper error handling with custom exceptions
-   - [ ] Review async/await patterns usage
+   - [✓] Review async/await patterns usage

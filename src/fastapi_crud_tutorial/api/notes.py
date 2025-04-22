@@ -1,31 +1,31 @@
 from fastapi import APIRouter, HTTPException, Path
 
 from fastapi_crud_tutorial.db import crud
-from fastapi_crud_tutorial.models.models import NoteDB, NoteSchema
+from fastapi_crud_tutorial.schemas.notes import NoteCreate, NoteResponse, NoteUpdate
 
 router = APIRouter()
 
 
 @router.get(
     "/",
-    response_model=list[NoteDB],
+    response_model=list[NoteResponse],
     summary="Get all notes",
     description="Retrieve a list of all notes from the database",
     response_description="List of notes successfully retrieved",
 )
-async def read_all_notes() -> list[NoteDB]:
+async def read_all_notes() -> list[NoteResponse]:
     """
     Get all notes stored in the database.
 
     Returns:
-        list[NoteDB]: A list of all notes, each containing:
+        list[NoteResponse]: A list of all notes, each containing:
         - **id**: The note's unique identifier
         - **title**: The note's title
         - **description**: The note's content
     """
     notes = await crud.get_all()
     return [
-        NoteDB(
+        NoteResponse(
             id=note["id"],
             title=note["title"],
             description=note["description"],
@@ -34,10 +34,10 @@ async def read_all_notes() -> list[NoteDB]:
     ]
 
 
-@router.post("/", response_model=NoteDB, status_code=201)
-async def create_note(payload: NoteSchema) -> NoteDB:
+@router.post("/", response_model=NoteResponse, status_code=201)
+async def create_note(payload: NoteCreate) -> NoteResponse:
     note_id = await crud.post(payload)
-    return NoteDB(
+    return NoteResponse(
         id=note_id,
         title=payload.title,
         description=payload.description,
@@ -46,7 +46,7 @@ async def create_note(payload: NoteSchema) -> NoteDB:
 
 @router.get(
     "/{id}/",
-    response_model=NoteDB,
+    response_model=NoteResponse,
     responses={
         404: {
             "description": "Note not found",
@@ -56,7 +56,7 @@ async def create_note(payload: NoteSchema) -> NoteDB:
 )
 async def read_note(
     id: int = Path(..., gt=0, description="The ID of the note to retrieve"),
-) -> NoteDB:
+) -> NoteResponse:
     """
     Retrieve a specific note by its ID.
 
@@ -67,45 +67,45 @@ async def read_note(
         HTTPException: If the note is not found (404)
 
     Returns:
-        NoteDB: The requested note
+        NoteResponse: The requested note
     """
     note = await crud.get(id)
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
-    return NoteDB(
+    return NoteResponse(
         id=note["id"],
         title=note["title"],
         description=note["description"],
     )
 
 
-@router.put("/{id}/", response_model=NoteDB)
+@router.put("/{id}/", response_model=NoteResponse)
 async def update_note(
-    payload: NoteSchema,
+    payload: NoteUpdate,
     id: int = Path(..., gt=0),
-) -> NoteDB:
+) -> NoteResponse:
     note = await crud.get(id)
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
 
     note_id = await crud.put(id, payload)
-    return NoteDB(
+    return NoteResponse(
         id=note_id,
         title=payload.title,
         description=payload.description,
     )
 
 
-@router.delete("/{id}/", response_model=NoteDB)
+@router.delete("/{id}/", response_model=NoteResponse)
 async def delete_note(
     id: int = Path(..., gt=0),
-) -> NoteDB:
+) -> NoteResponse:
     note = await crud.get(id)
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
 
     await crud.delete(id)
-    return NoteDB(
+    return NoteResponse(
         id=note["id"],
         title=note["title"],
         description=note["description"],

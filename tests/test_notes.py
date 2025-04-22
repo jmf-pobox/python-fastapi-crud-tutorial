@@ -6,13 +6,13 @@ from fastapi.testclient import TestClient
 from starlette.testclient import TestClient
 
 from fastapi_crud_tutorial.db import crud
-from fastapi_crud_tutorial.models.models import NoteSchema
+from fastapi_crud_tutorial.schemas.notes import NoteCreate
 
 
 def test_read_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     test_data = {"id": 1, "title": "something", "description": "something else"}
 
-    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
+    async def mock_get(id: int) -> dict[str, Any] | None:
         return test_data
 
     monkeypatch.setattr(crud, "get", mock_get)
@@ -25,7 +25,7 @@ def test_read_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> Non
 def test_read_note_incorrect_id(
     test_app: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
+    async def mock_get(id: int) -> dict[str, Any] | None:
         return None
 
     monkeypatch.setattr(crud, "get", mock_get)
@@ -44,7 +44,7 @@ def test_read_all_notes(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -
         {"title": "someone", "description": "someone else", "id": 2},
     ]
 
-    async def mock_get_all() -> List[Dict[str, Any]]:
+    async def mock_get_all() -> list[dict[str, Any]]:
         return test_data
 
     monkeypatch.setattr(crud, "get_all", mock_get_all)
@@ -62,7 +62,7 @@ def test_create_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> N
         "description": "something else",
     }
 
-    async def mock_post(payload: NoteSchema) -> int:
+    async def mock_post(payload: NoteCreate) -> int:
         return 1
 
     monkeypatch.setattr(crud, "post", mock_post)
@@ -89,12 +89,12 @@ def test_create_note_invalid_json(test_app: TestClient) -> None:
 def test_update_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     test_update_data = {"title": "someone", "description": "someone else", "id": 1}
 
-    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
+    async def mock_get(id: int) -> dict[str, Any] | None:
         return test_update_data
 
     monkeypatch.setattr(crud, "get", mock_get)
 
-    async def mock_put(id: int, payload: NoteSchema) -> int:
+    async def mock_put(id: int, payload: NoteCreate) -> int:
         return 1
 
     monkeypatch.setattr(crud, "put", mock_put)
@@ -119,10 +119,10 @@ def test_update_note_invalid(
     test_app: TestClient,
     monkeypatch: pytest.MonkeyPatch,
     id: int,
-    payload: Dict[str, Any],
+    payload: dict[str, Any],
     status_code: int,
 ) -> None:
-    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
+    async def mock_get(id: int) -> dict[str, Any] | None:
         return None
 
     monkeypatch.setattr(crud, "get", mock_get)
@@ -137,7 +137,7 @@ def test_update_note_invalid(
 def test_delete_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     test_data = {"title": "someone", "description": "someone else", "id": 1}
 
-    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
+    async def mock_get(id: int) -> dict[str, Any] | None:
         return test_data
 
     monkeypatch.setattr(crud, "get", mock_get)
@@ -156,7 +156,7 @@ def test_delete_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> N
 def test_remove_note_incorrect_id(
     test_app: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    async def mock_get(id: int) -> Optional[Dict[str, Any]]:
+    async def mock_get(id: int) -> dict[str, Any] | None:
         return None
 
     monkeypatch.setattr(crud, "get", mock_get)
