@@ -23,7 +23,6 @@ class NoteResponse(NoteCreate):
 
     id: int
 
-    class Config:
-        """Pydantic config for the schema."""
-
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }

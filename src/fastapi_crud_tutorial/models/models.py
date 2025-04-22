@@ -11,7 +11,6 @@ class Note(BaseModel):
     description: str
     created_date: datetime
 
-    class Config:
-        """Pydantic config for the model."""
-
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }

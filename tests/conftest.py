@@ -6,6 +6,7 @@ from collections.abc import Generator
 os.environ["DATABASE_URL"] = "sqlite:///./test.db"
 
 import pytest
+import pytest_asyncio
 from starlette.testclient import TestClient
 
 # Add src directory to Python path
