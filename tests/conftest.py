@@ -10,7 +10,7 @@ from starlette.testclient import TestClient
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.main import app
+from fastapi_crud_tutorial.main import app
 
 
 @pytest.fixture(autouse=True)

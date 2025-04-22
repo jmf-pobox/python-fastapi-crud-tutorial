@@ -1,7 +1,7 @@
 from typing import Any, List, Optional, Sequence, cast
 
-from app.api.models import NoteSchema
-from app.db import database, notes
+from fastapi_crud_tutorial.models.models import NoteSchema
+from fastapi_crud_tutorial.db.db import database, notes
 from databases.interfaces import Record
 
 

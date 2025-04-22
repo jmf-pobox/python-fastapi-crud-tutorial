@@ -160,3 +160,6 @@ cython_debug/
 .ruff_cache/
 .pixi
 test.db
+
+# Development database
+dev.db

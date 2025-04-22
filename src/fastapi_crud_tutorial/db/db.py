@@ -4,9 +4,7 @@ from databases import Database
 from sqlalchemy import Column, DateTime, Integer, MetaData, String, Table, create_engine
 from sqlalchemy.sql import func
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is not set")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./dev.db")
 
 # SQLAlchemy
 engine = create_engine(DATABASE_URL)

@@ -19,6 +19,35 @@ This project follows a clean architecture with separation of concerns:
 - `crud.py` interacts directly with the database using models defined in `models.py`
 - Tests mock `crud.py` functions to test router functionality without database interactions
 
+## Database Configuration
+
+The application supports multiple database configurations:
+
+1. **Development Database**: 
+   - Default SQLite database at `dev.db`
+   - Created automatically when no `DATABASE_URL` is set
+   - Used for local development and testing
+   - Not committed to version control
+
+2. **Test Database**:
+   - SQLite database at `test.db`
+   - Used exclusively for running tests
+   - Created and managed by pytest
+
+3. **Production Database**:
+   - Configured via `DATABASE_URL` environment variable
+   - Typically PostgreSQL in production
+   - Managed through Docker Compose in development
+
+To use a different database, set the `DATABASE_URL` environment variable:
+```bash
+# PostgreSQL example
+export DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+
+# SQLite example
+export DATABASE_URL=sqlite:///./custom.db
+```
+
 ## Getting Started
 
 ### Prerequisites
@@ -83,88 +112,86 @@ hatch run dev          # Start server with Docker
 
 ### API Endpoints
 
+#### Health Check
 - **GET /ping**: Health check endpoint
+  ```bash
+  # Check API health
+  http --follow GET http://localhost:8002/ping
+  ```
+
+#### Notes Operations
+- **GET /notes/**: Get all notes
+  ```bash
+  # Retrieve all notes
+  http --follow GET http://localhost:8002/notes/
+  ```
+
 - **POST /notes/**: Create a new note
-- **GET /notes/{id}/**: Get a note by ID
+  ```bash
+  # Create a new note
+  http --follow --json POST http://localhost:8002/notes/ \
+      title="Shopping List" \
+      description="Milk, bread, eggs"
+  ```
 
-### Example API Requests
+- **GET /notes/{id}/**: Get a specific note by ID
+  ```bash
+  # Retrieve note with ID 1
+  http --follow GET http://localhost:8002/notes/1
+  ```
 
-Using HTTPie:
+- **PUT /notes/{id}/**: Update a specific note
+  ```bash
+  # Update note with ID 1
+  http --follow --json PUT http://localhost:8002/notes/1 \
+      title="Updated Shopping List" \
+      description="Milk, bread, eggs, cheese"
+  ```
 
-```bash
-# Health check
-http GET http://localhost:8002/ping
+- **DELETE /notes/{id}/**: Delete a specific note
+  ```bash
+  # Delete note with ID 1
+  http --follow DELETE http://localhost:8002/notes/1
+  ```
 
-# Create a note
-http --json POST http://localhost:8002/notes/ title="My Note" description="Note content"
-
-# Get a note
-http GET http://localhost:8002/notes/1
-```
-
-## Development
-
-### Project Structure
-
-```
-fastapi-crud/
-├── docker-compose.yml
-├── pyproject.toml        # Project configuration and dependencies
-└── src/
-    ├── Dockerfile
-    ├── app/
-    │   ├── __init__.py
-    │   ├── api/
-    │   │   ├── crud.py    # Database operations
-    │   │   ├── models.py  # Pydantic models
-    │   │   ├── notes.py   # API routes
-    │   │   └── ping.py    # Health check
-    │   ├── db.py          # Database configuration
-    │   └── main.py        # Application setup
-    ├── tests/             # Test files
-```
-
-### Dependencies
-
-- **FastAPI**: Modern web framework for building APIs
-- **Uvicorn**: ASGI server for running FastAPI applications
-- **SQLAlchemy**: SQL toolkit and ORM
-- **Databases**: Async database support for Python
-- **Asyncpg**: PostgreSQL client library for asyncio
-- **Pytest**: Testing framework
-- **Ruff**: Fast Python linter and formatter
-- **MyPy**: Static type checker
-
-## Environment Variables
-
-The application uses the following environment variables:
-
-- `DATABASE_URL`: PostgreSQL connection string (set in docker-compose.yml)
-
-## Database Configuration
-
-PostgreSQL database with the following settings (configured in docker-compose.yml):
-
-- **User**: hello_fastapi
-- **Password**: hello_fastapi
-- **Database**: hello_fastapi_dev
-- **Port**: 5432 (internal to Docker network)
-
-## Note Schema
-
+Each endpoint expects and returns JSON data in the following format:
 ```json
 {
-  "id": 1,
-  "title": "Example Note",
-  "description": "This is a note description"
+  "id": 1,              // Returned by GET, not required for POST/PUT
+  "title": "string",    // Required, 3-50 characters
+  "description": "string" // Required, 3-50 characters
 }
 ```
 
-## Looking for some more challenges?
+Response Status Codes:
+- `200`: Successful operation (GET, PUT, DELETE)
+- `201`: Note created successfully (POST)
+- `404`: Note not found
+- `422`: Validation error (invalid input data)
 
-* Review the official tutorial. It's long but well worth a read.
-* Implement async background tasks, database migrations, and auth.
-* Abstract out the application configuration to a separate file.
-* In a production environment, you'll probably want to stand up Gunicorn and let it manage Uvicorn. Review Running with Gunicorn and the Deployment guide for more info. Check out the official uvicorn-gunicorn-fastapi Docker image as well.
-* Finally, check out the Test-Driven Development with FastAPI and Docker course as well as our other FastAPI courses for more!
-* You can find the source code in the fastapi-crud-async repo. Thanks for reading!
+### API Documentation
+
+FastAPI automatically generates interactive API documentation for all endpoints. Once the application is running, you can access:
+
+- **Swagger UI**: Interactive API documentation and testing interface
+  - URL: [http://localhost:8002/docs](http://localhost:8002/docs)
+  - Features:
+    - Interactive endpoint testing
+    - Request/response schema examples
+    - Authentication support
+    - Real-time API exploration
+
+- **ReDoc**: Alternative documentation interface
+  - URL: [http://localhost:8002/redoc](http://localhost:8002/redoc)
+  - Features:
+    - Clean, responsive interface
+    - Searchable documentation
+    - Schema references
+    - Method and model descriptions
+
+Both interfaces automatically update when API endpoints are modified and include:
+- Detailed request/response schemas
+- Input validation rules
+- Example requests and responses
+- Error responses and status codes
+- Authentication requirements (when configured)

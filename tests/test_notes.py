@@ -5,8 +5,8 @@ import pytest
 from fastapi.testclient import TestClient
 from starlette.testclient import TestClient
 
-from app.api import crud
-from app.api.models import NoteSchema
+from fastapi_crud_tutorial.db import crud
+from fastapi_crud_tutorial.models.models import NoteSchema
 
 
 def test_read_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -22,7 +22,9 @@ def test_read_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> Non
     assert response.json() == test_data
 
 
-def test_read_note_incorrect_id(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_read_note_incorrect_id(
+    test_app: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
     async def mock_get(id: int) -> Optional[Dict[str, Any]]:
         return None
 
@@ -151,7 +153,9 @@ def test_delete_note(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> N
     assert response.json() == test_data
 
 
-def test_remove_note_incorrect_id(test_app: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_remove_note_incorrect_id(
+    test_app: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
     async def mock_get(id: int) -> Optional[Dict[str, Any]]:
         return None
 
