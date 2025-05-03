@@ -1,6 +1,98 @@
 # FastAPI CRUD Application
 
-A simple RESTful API application built with FastAPI for managing notes, featuring CRUD operations (Create, Read, Update, Delete). This is based entirely upon the testdriven.io tutorial at https://testdriven.io/blog/fastapi-crud/ which was written by Michael Herman (https://testdriven.io/authors/herman/)
+A modern, production-ready FastAPI CRUD application with a robust project structure, Docker support, and modern Python tooling.
+
+## Project Structure
+
+This project uses the recommended `src`-layout for Python packages:
+
+```
+project-root/
+├── src/
+│   └── fastapi_crud_tutorial/
+│       ├── api/         # API routers
+│       ├── core/        # Core logic (if needed)
+│       ├── db/          # Database access and config
+│       ├── models/      # Domain models
+│       ├── schemas/     # Pydantic schemas for validation
+│       └── main.py      # FastAPI app entrypoint
+├── tests/               # All tests (outside src)
+├── pyproject.toml       # Project config (PEP 621, Hatch, etc.)
+├── Dockerfile           # Docker build (in project root)
+├── docker-compose.yml   # Multi-service orchestration
+└── README.md
+```
+
+## Key Features
+- **src layout**: Prevents import shadowing and ensures robust packaging
+- **Hatch**: Modern Python project/dependency management and scripts
+- **Docker & Compose**: For local development and production parity
+- **PostgreSQL**: Production database (via Docker)
+- **SQLite**: Default for local development and testing
+- **Async**: Fully async API and DB access
+- **Type safety**: mypy strict mode, Ruff linting, and Pydantic validation
+- **Editable install**: Ensures imports work in all environments
+
+## Development Environment
+- Python 3.11+
+- [Hatch](https://hatch.pypa.io/) for environment and script management
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
+
+## Setup & Usage
+
+### 1. Clone and Install Hatch
+```bash
+pip install hatch
+```
+
+### 2. Create and activate the dev environment
+```bash
+hatch env create
+hatch shell
+```
+
+### 3. Run tests, lint, and type checks
+```bash
+hatch run test
+hatch run lint
+hatch run type
+```
+
+### 4. Start the full stack (API + DB) in Docker
+```bash
+hatch run docker-up
+hatch run dev
+```
+- The API will be available at [http://localhost:8002](http://localhost:8002)
+- Swagger docs: [http://localhost:8002/docs](http://localhost:8002/docs)
+
+### 5. Stopping and cleaning up
+```bash
+hatch run docker-down
+```
+
+## Docker & Compose Details
+- **Dockerfile** (in project root) copies `pyproject.toml` and `src/` into the image, sets `PYTHONPATH`, and installs the package in editable mode.
+- **docker-compose.yml** builds from the project root, mounts `src/` for live reload, and sets all necessary environment variables.
+- **PostgreSQL** is the default DB in Docker; SQLite is used for local/dev/testing if no `DATABASE_URL` is set.
+
+## API Endpoints
+- See the "API Endpoints" and "API Documentation" sections below for details on all routes and interactive docs.
+
+## Best Practices Followed
+- **src layout** for robust imports and packaging
+- **Editable install** for dev and Docker
+- **Strict type checking** and linting
+- **Separation of concerns**: API, DB, models, schemas, and tests
+- **Modern dependency management** with Hatch and pyproject.toml
+- **Production parity**: Docker Compose matches local and prod
+
+## Contributing & Extending
+- Add dependencies to `pyproject.toml` and re-run `hatch run docker-build`
+- Add new routers, models, or schemas in the appropriate `src/fastapi_crud_tutorial/` subdirectory
+- All tests go in `/tests` (never in `src/`)
+
+---
 
 ## Project Architecture
 

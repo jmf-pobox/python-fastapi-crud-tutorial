@@ -15,6 +15,7 @@ dependencies = [
     "ruff>=0.2.0",
     "mypy>=1.8.0",
     "aiosqlite>=0.21.0",
+    "asyncpg>=0.30.0",
 ]
 
 [build-system]
@@ -35,16 +36,16 @@ dependencies = [
 
 [tool.hatch.envs.default.scripts]
 test = "PYTHONPATH=src pytest {args:tests}"
-lint = "ruff check {args:src}"
-type = "mypy {args:src}"
-format = "ruff format {args:src}"
+lint = "ruff check {args:src} {args:tests}"
+type = "mypy {args:src} {args:tests}"
+format = "ruff format {args:src} {args:tests}"
 docker-up = "docker-compose up -d"
 docker-down = "docker-compose down"
 docker-logs = "docker-compose logs -f"
 docker-build = "docker-compose build"
 dev = [
     "docker-up",
-    "DATABASE_URL=sqlite:///./dev.db uvicorn fastapi_crud_tutorial.main:app --reload --host 0.0.0.0 --port 8000",
+    "PYTHONPATH=src DATABASE_URL=sqlite:///./dev.db uvicorn fastapi_crud_tutorial.main:app --reload --host 0.0.0.0 --port 8000",
 ]
 
 [tool.ruff]
