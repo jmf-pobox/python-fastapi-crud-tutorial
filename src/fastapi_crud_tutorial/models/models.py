@@ -11,6 +11,4 @@ class Note(BaseModel):
     description: str
     created_date: datetime
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}

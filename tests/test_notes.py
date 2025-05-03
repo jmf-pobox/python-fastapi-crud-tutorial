@@ -2,7 +2,6 @@ import json
 from typing import Any
 
 import pytest
-from fastapi.testclient import TestClient
 from starlette.testclient import TestClient
 
 from fastapi_crud_tutorial.db import crud

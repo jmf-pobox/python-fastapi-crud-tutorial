@@ -34,7 +34,7 @@ dependencies = [
 ]
 
 [tool.hatch.envs.default.scripts]
-test = "pytest {args:tests}"
+test = "PYTHONPATH=src pytest {args:tests}"
 lint = "ruff check {args:src}"
 type = "mypy {args:src}"
 format = "ruff format {args:src}"
