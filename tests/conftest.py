@@ -2,12 +2,12 @@ import os
 import sys
 from collections.abc import Generator
 
-# Set up test database URL before any imports
-os.environ["DATABASE_URL"] = "sqlite:///./test.db"
-
 import pytest
 import pytest_asyncio
 from starlette.testclient import TestClient
+
+# Set up test database URL before any imports
+os.environ["DATABASE_URL"] = "sqlite:///./test.db"
 
 # Add src directory to Python path
 src_path = os.path.join(
